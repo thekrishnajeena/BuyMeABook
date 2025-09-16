@@ -1,0 +1,10 @@
+{
+  "/api/users/explore/route": "app/api/users/explore/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js",
+  "/contribute/page": "app/contribute/page.js",
+  "/about/page": "app/about/page.js",
+  "/(app)/[username]/page": "app/(app)/[username]/page.js",
+  "/(app)/explore/page": "app/(app)/explore/page.js",
+  "/(app)/supporters/page": "app/(app)/supporters/page.js"
+}
