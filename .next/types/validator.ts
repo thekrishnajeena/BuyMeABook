@@ -101,6 +101,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/api/campaigns/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/campaigns">> = Specific
+  const handler = {} as typeof import("../../app/api/campaigns/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/api/pubcampaigns/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/pubcampaigns">> = Specific
+  const handler = {} as typeof import("../../app/api/pubcampaigns/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/api/users/explore/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/users/explore">> = Specific

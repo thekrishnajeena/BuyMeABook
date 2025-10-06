@@ -10,12 +10,15 @@ import { useAuth } from "../context/AuthContext";
 import {doc, setDoc, getDoc, writeBatch} from "firebase/firestore";
 import {db} from "../firebaseConfig";
 import AvatarDropdown from "./AvatarDeopdown";
+import { useState } from "react";
 
 function Header(){
 
 
   const { user } = useAuth();
   const navigate = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   const generateUsername = async (displayName: string) => {
   const base = displayName.toLowerCase().replace(/\s+/g, ""); // remove spaces
@@ -101,79 +104,118 @@ console.log("Stored username:", localStorage.getItem("username"));
   };
 
 return (
-    <>
-<header className="absolute inset-x-0 top-0 z-10 w-full">
-    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        {/* <!-- lg+ --> */}
-        <nav className="flex items-center justify-between h-16 lg:h-20">
-            <div className="flex-shrink-0">
-                <Link href="/" title="" className="flex">
-                    <img className="w-auto h-10 lg:h-20" src="/bmab.png" alt="" />
-                </Link>
-            </div>
+    <header className="absolute inset-x-0 top-0 z-100 w-full bg-[#0B1120] text-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Navbar */}
+        <nav className="flex items-center justify-between h-16 lg:h-20 bg-[#0B1120] text-white shadow-md">
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0 flex items-center">
+            <img src="/bmab.png" alt="Logo" className="h-10 w-auto lg:h-14" />
+          </Link>
 
-            <button type="button" className="inline-flex p-2 text-black transition-all duration-200 rounded-md lg:hidden focus:bg-gray-100 hover:bg-gray-100">
-                {/* <!-- Menu open: "hidden", Menu closed: "block" --> */}
-                <svg className="block w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
-                </svg>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="lg:hidden inline-flex p-2 rounded-md text-white hover:bg-blue-800 focus:bg-blue-800 transition-all"
+          >
+            {menuOpen ? (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 8h16M4 16h16"
+                />
+              </svg>
+            )}
+          </button>
 
-                {/* <!-- Menu open: "block", Menu closed: "hidden" --> */}
-                <svg className="hidden w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex lg:items-center lg:space-x-10">
+            <Link
+              href="/contribute"
+              className="text-base font-medium text-white hover:text-blue-400 transition-all"
+            >
+              Contribute
+            </Link>
+            <Link
+              href="/about"
+              className="text-base font-medium text-white hover:text-blue-400 transition-all"
+            >
+              About
+            </Link>
 
-        
-            <div className="items-center justify-center hidden px-4 py-3 ml-10 text-base font-semibold text-white transition-all duration-200 border-transparent rounded-md lg:inline-flex">
-           
             {user ? (
-        <>
-            <div className="hidden lg:flex lg:items-center lg:ml-auto lg:space-x-10 me-4">
-
-                <Link href="/contribute" title="" className="text-base font-medium text-white transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Contribute </Link>
-
-                <Link href="/about" title="" className="text-base font-medium text-white transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> About </Link>
-            </div>
-
-            <AvatarDropdown profile={user} onLogout={handleLogout}/>
-        </>
-      ) : (
-<>
-            <div className="hidden lg:flex lg:items-center lg:ml-auto lg:space-x-10">
-
-                <Link href="/contribute" title="" className="text-base font-medium text-white transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Contribute </Link>
-
-                <Link href="/about" title="" className="text-base font-medium text-white transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> About </Link>
-            </div>
-
-        <button onClick={handleLogin} className="px-4 py-2 mx-4 bg-blue-500 text-white rounded cursor-pointer inline-flex items-center font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 focus:bg-blue-700" role="button">
-          Sign in with Google
-        </button></>
-      )}
-        
-            </div>
+              <AvatarDropdown profile={user} onLogout={handleLogout} />
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 font-semibold rounded-lg transition-all"
+              >
+                Sign in with Google
+              </button>
+            )}
+          </div>
         </nav>
 
-        {/* <!-- xs to lg --> */}
-        <nav className="pt-4 pb-6 bg-white border border-gray-200 rounded-md shadow-md lg:hidden">
-            <div className="flow-root">
-                <div className="flex flex-col px-6 -my-2 space-y-1">
-     
-                    <Link href="/contribute" title="" className="inline-flex py-2 text-base font-medium text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600 cursor-pointer"> Contribute </Link>
-
-                    <Link href="/about" title="" className="inline-flex py-2 text-base font-medium text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600 cursor-pointer"> About </Link>
-                </div>
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="lg:hidden bg-gray-900 border-t border-gray-700 py-4 z-[100]">
+            <div className="flex flex-col space-y-3 px-4">
+              
+              <Link
+                href="/contribute"
+                className="text-base font-medium text-white hover:text-blue-400"
+              >
+                Contribute
+              </Link>
+              <Link
+                href="/about"
+                className="text-base font-medium text-white hover:text-blue-400"
+              >
+                About
+              </Link>
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="mt-2 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 
+                  z-[100] rounded-lg font-semibold"
+                >
+                  Logout
+                </button>
+              ) : (
+                <button
+                  onClick={handleLogin}
+                  className="mt-2 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
+                >
+                  Sign in with Google
+                </button>
+              )}
             </div>
-
-            <div className="px-6 mt-6">
-                <Link href="/login" title="" className="cursor-pointer inline-flex justify-center px-4 py-3 text-base font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-md tems-center hover:bg-blue-700 focus:bg-blue-700" role="button"> Get started now </Link>
-            </div>
-        </nav>
-    </div>
-</header>
-</>
-)
+          </div>
+        )}
+      </div>
+    </header>
+  );
 }
 
 export default Header;

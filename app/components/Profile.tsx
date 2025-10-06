@@ -41,11 +41,11 @@ export default function UserProfile({ profile }: UserProfileProps) {
         )}
 
         <div>
-          <h1 className="text-2xl text-gray-800 font-bold">
+          <h1 className="text-2xl text-white font-bold">
             @{profile.displayName || "anonymous"}
           </h1>
           {profile.description && (
-            <p className="text-gray-600">{profile.description}</p>
+            <p className="text-white">{profile.description}</p>
           )}
         </div>
       </div>

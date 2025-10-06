@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-
+import { useRouter } from "next/navigation";
 
 type Profile = {
   photoURL?: string | null;
@@ -20,7 +20,13 @@ export default function AvatarDropdown({
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
+  const [username, setUsername] = useState("")
+
+  const router = useRouter()
+
   useEffect(() => {
+    setUsername(localStorage.getItem("username") ?? "")
+
     function onDocClick(e: MouseEvent) {
       const target = e.target as Node;
       if (
@@ -95,11 +101,15 @@ export default function AvatarDropdown({
             <li>
               <a
                 href="#"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {e.preventDefault()
+                  router.push(`/${username}`)
+                }
+                  
+                }
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                 role="menuitem"
               >
-                Profile Card
+                Home
               </a>
             </li>
             <li>

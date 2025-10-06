@@ -13,10 +13,10 @@ export default function About() {
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20">
           <div className="mx-auto max-w-5xl px-6 lg:px-8 text-center">
-            <h1 className="text-4xl sm:text-5xl font-extrabold">
-              About <span className="text-white-900">BuyMeABook</span>
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-white">
+              About <span className="text-white">BuyMeABook</span>
             </h1>
-            <p className="mt-6 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto text-white-900">
+            <p className="mt-6 text-lg sm:text-xl leading-relaxed max-w-3xl mx-auto text-white">
               We believe books have the power to change lives. <br />  
               BuyMeABook is a platform where readers support readers —  
               helping each other get the books they dream of, one campaign at a time.
@@ -28,14 +28,14 @@ export default function About() {
         <section className="py-20">
           <div className="mx-auto max-w-6xl px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-white-900">Our Mission</h2>
-              <p className="mt-4 text-lg text-white-600 leading-relaxed">
+              <h2 className="text-3xl font-bold text-white">Our Mission</h2>
+              <p className="mt-4 text-lg text-white leading-relaxed">
                 Not everyone has easy access to the books they want to read.  
                 Whether it’s a student chasing knowledge, a writer exploring inspiration,  
                 or a casual reader looking for their next adventure — BuyMeABook makes it possible  
                 for people to fund each other’s reading journeys.
               </p>
-              <p className="mt-4 text-lg text-white-600 leading-relaxed">
+              <p className="mt-4 text-lg text-gray-100 leading-relaxed">
                 Think of it like <span className="font-semibold">BuyMeACoffee</span>,  
                 but instead of coffee, we’re fueling curiosity, imagination, and growth with books.
               </p>
@@ -51,7 +51,7 @@ export default function About() {
         {/* Features */}
         <section className="py-20">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center text-white-900">
+            <h2 className="text-3xl font-bold text-center text-white">
               What Makes Us Different
             </h2>
             <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">

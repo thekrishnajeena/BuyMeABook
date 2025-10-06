@@ -1,46 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
+import Loader from "../components/Loader";
 
 // Dummy data for campaigns (replace with Firestore fetch later)
-const dummyCampaigns = [
-  {
-    username: "booklover123",
-    profileURL: "/user1.png",
-    description: "I’m raising funds to buy 'Atomic Habits' to improve my habits and lifestyle.",
-    book: {
-      title: "Atomic Habits",
-      author: "James Clear",
-      cover: "/atomic-habits.jpg",
-      description: "An easy & proven way to build good habits and break bad ones.",
-    },
-    totalContribution: 1200,
-    target: 5000,
-  },
-  {
-    username: "literaturefan",
-    profileURL: "/user2.png",
-    description: "Help me get a copy of 'Meditations' by Marcus Aurelius.",
-    book: {
-      title: "Meditations",
-      author: "Marcus Aurelius",
-      cover: "/meditations.jpg",
-      description: "A timeless guide to self-mastery, resilience, and purpose.",
-    },
-    totalContribution: 700,
-    target: 2000,
-  },
-];
+
+interface Book {
+  title: string;
+  author: string;
+  cover: string;
+  description: string;
+}
+
+interface Campaign {
+  id: string;
+  username: string;
+  profileURL: string;
+  description: string;
+  book: Book;
+  totalContribution: number;
+  target: number;
+}
 
 export default function Contribute() {
   const [search, setSearch] = useState("");
   const [selectedBook, setSelectedBook] = useState<any>(null);
+   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredCampaigns = dummyCampaigns.filter((c) =>
-    c.username.toLowerCase().includes(search.toLowerCase())
-  );
+const filteredCampaigns = campaigns.filter((c) => {
+  const username = (c.username ?? "").toLowerCase();
+  const bookTitle = (c.book?.title ?? "").toLowerCase();
+  const searchTerm = search.toLowerCase();
+ 
+  return username.includes(searchTerm) || bookTitle.includes(searchTerm);
+});
+
+
+useEffect(() => {
+  const fetchCampaigns = async () => {
+    try {
+      const res = await fetch("/api/pubcampaigns");
+      const data = await res.json();
+      console.log(data.campaigns);
+      if (data.campaigns) {
+        setCampaigns(data.campaigns);
+      }
+    } catch (err) {
+      console.error("Failed to fetch campaigns:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCampaigns();
+}, []);
+
+
+    if (loading) 
+      return <Loader/>
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#101212] relative to-[#08201D]">
@@ -49,10 +69,10 @@ export default function Contribute() {
       <main className="flex-1 py-20 px-6 lg:px-12">
         {/* Page Heading */}
         <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-white-900">
+          <h1 className="text-4xl font-bold text-blue-100">
             Support a Reader’s Journey 📚
           </h1>
-          <p className="mt-4 text-lg text-white-600">
+          <p className="mt-4 text-lg text-blue-50">
             Explore campaigns created by book lovers and contribute directly via UPI.  
             No login required — just share the joy of reading!
           </p>
@@ -72,18 +92,19 @@ export default function Contribute() {
 
         {/* Campaigns Grid */}
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCampaigns.map((campaign, idx) => (
+          {campaigns.map((campaign, idx) => (
             <div
               key={idx}
               className="bg-white p-6 rounded-xl shadow hover:shadow-md transition flex flex-col"
             >
+            
               {/* User Info */}
               <div className="flex items-center gap-3">
-                <img
+                {/* <img
                   src={campaign.profileURL}
                   alt={campaign.username}
                   className="w-12 h-12 rounded-full object-cover"
-                />
+                /> */}
                 <div>
                   <h3 className="font-semibold text-lg text-gray-900">
                     @{campaign.username}
@@ -93,25 +114,26 @@ export default function Contribute() {
               </div>
 
               {/* Campaign Description */}
-              <p className="mt-4 text-gray-700 leading-relaxed">
+              {/* <p className="mt-4 text-gray-700 leading-relaxed">
                 {campaign.description}
-              </p>
+              </p> */}
 
               {/* Book Card */}
               <div
                 className="mt-6 bg-gray-50 border rounded-lg p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-100 transition"
                 onClick={() => setSelectedBook(campaign.book)}
               >
-                <img
+                {/* <img
                   src={campaign.book.cover}
                   alt={campaign.book.title}
                   className="w-16 h-20 object-cover rounded"
-                />
+                /> */}
                 <div>
                   <h4 className="font-semibold text-gray-900">
-                    {campaign.book.title}
+                    {campaign.name}
+                    
                   </h4>
-                  <p className="text-sm text-gray-600">{campaign.book.author}</p>
+                  {/* <p className="text-sm text-gray-600">{campaign.book.author}</p> */}
                 </div>
               </div>
 
@@ -178,4 +200,5 @@ export default function Contribute() {
       </footer>
     </div>
   );
+
 }

@@ -5,12 +5,12 @@ import "./globals.css";
 
 export default function Home() {
   return (
-    <>
-      <Header />
+    <div>
+      <Header/>
       <main>
         <Hero />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
