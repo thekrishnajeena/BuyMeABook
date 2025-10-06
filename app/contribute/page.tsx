@@ -130,7 +130,7 @@ useEffect(() => {
                 /> */}
                 <div>
                   <h4 className="font-semibold text-gray-900">
-                    {campaign.name}
+                    {campaign.book.title}
                     
                   </h4>
                   {/* <p className="text-sm text-gray-600">{campaign.book.author}</p> */}

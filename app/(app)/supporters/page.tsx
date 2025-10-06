@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FiGift, FiHeart } from "react-icons/fi";
+import { FiHeart } from "react-icons/fi";
 
 export default function SupportersPage() {
   const [supporters, setSupporters] = useState<any[]>([]);
