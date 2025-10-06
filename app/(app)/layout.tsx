@@ -34,8 +34,7 @@ function SidebarLink({
 }
 
 export default function DashboardLayout({
-  children,
-  params,
+  children
 }: {
   children: React.ReactNode;
   params: { username: string };
