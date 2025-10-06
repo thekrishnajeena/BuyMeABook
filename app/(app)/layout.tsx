@@ -36,8 +36,7 @@ function SidebarLink({
 export default function DashboardLayout({
   children
 }: {
-  children: React.ReactNode;
-  params: { username: string };
+  children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isOwner = useAuth(); // add logic
