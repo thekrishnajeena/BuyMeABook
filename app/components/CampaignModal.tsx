@@ -33,12 +33,14 @@ export default function CreateCampaignModal({
     address: string;
     mobile: string;
     username: string;
+    description: string;
   }>({
     book: null,
     title: "",
     address: "",
     mobile: "",
-    username: username
+    username: username,
+    description: ""
   });
 
   const handleConfirm = async () => {
