@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 export default function TestingBanner() {
   return (
@@ -52,6 +53,7 @@ export function FeedbackModal() {
       setMessage("")
       setEmail("")
       setOpen(false)
+      toast.success("Feedback submitted!")
     } else {
       setStatus("❌ Something went wrong.")
     }
