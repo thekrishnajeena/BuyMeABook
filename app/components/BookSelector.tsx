@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   collection,
   endAt,
@@ -20,6 +20,8 @@ export default function BookSelector({
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Initial load + reset on search clear
   useEffect(() => {
@@ -31,6 +33,8 @@ export default function BookSelector({
   }, [search]);
 
   const loadBooks = async (reset = false) => {
+    if (loading || (!reset && !hasMore)) return;
+    
     setLoading(true);
 
     let q = query(collection(db, "booksnew"), orderBy("title"), limit(5));
@@ -48,6 +52,7 @@ export default function BookSelector({
 
     setBooks(reset ? items : (prev) => [...prev, ...items]);
     setLastDoc(snap.docs[snap.docs.length - 1] || null);
+    setHasMore(items.length === 5); // If we got less than 5, we've reached the end
 
     setLoading(false);
   };
@@ -81,8 +86,30 @@ export default function BookSelector({
     const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     setBooks(items);
     setLastDoc(null); // disable pagination for search results
+    setHasMore(false); // disable infinite scroll for search results
     setLoading(false);
   };
+
+  // Infinite scroll handler
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current || loading || !hasMore || search.trim() !== "") return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100; // Load when 100px from bottom
+    
+    if (isNearBottom) {
+      loadBooks();
+    }
+  }, [loading, hasMore, search]);
+
+  // Add scroll listener
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   return (
     <div>
@@ -96,7 +123,10 @@ export default function BookSelector({
         />
       </div>
 
-      <div className="space-y-3 max-h-64 overflow-y-auto">
+      <div 
+        ref={scrollContainerRef}
+        className="space-y-3 max-h-64 overflow-y-auto"
+      >
         {books.map((book) => (
           <div
             key={book.id}
@@ -114,22 +144,26 @@ export default function BookSelector({
             </div>
           </div>
         ))}
+        
+        {/* Loading indicator */}
+        {loading && (
+          <div className="flex justify-center items-center py-4">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+            <span className="ml-2 text-sm text-gray-500">Loading more books...</span>
+          </div>
+        )}
+        
+        {/* End of results indicator */}
+        {!hasMore && books.length > 0 && search.trim() === "" && (
+          <div className="text-center py-4 text-sm text-gray-500">
+            No more books to load
+          </div>
+        )}
+        
         {books.length === 0 && !loading && (
           <p className="text-center text-gray-500">No results found</p>
         )}
       </div>
-
-      {search.trim() === "" && (
-        <div className="mt-4 flex justify-center">
-          <button
-            onClick={() => loadBooks()}
-            disabled={loading}
-            className="px-4 py-2 rounded bg-blue-500 text-white disabled:opacity-50"
-          >
-            {loading ? "Loading..." : "Load More"}
-          </button>
-        </div>
-      )}
     </div>
   );
 }

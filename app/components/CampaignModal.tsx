@@ -13,9 +13,11 @@ import { useParams } from "next/navigation";
 export default function CreateCampaignModal({
   open,
   onClose,
+  fetchCampaigns,
 }: {
   open: boolean;
   onClose: () => void;
+  fetchCampaigns: () => void;
 }) {
   const [step, setStep] = useState<
     "select-book" | "details" | "review" | "loading"
@@ -54,6 +56,7 @@ export default function CreateCampaignModal({
       // ✅ success → close modal
       setStep("select-book");
       onClose();
+      fetchCampaigns();
     } catch (err) {
       alert("Error creating campaign: " + (err as Error).message);
       setStep("review"); // go back to review on error
@@ -118,7 +121,7 @@ function UserDetailsForm({
   onNext,
   onBack,
 }: {
-  data: { title: string; address: string; mobile: string };
+  data: { title: string; address: string; mobile: string; description: string };
   onChange: (fields: Partial<typeof data>) => void;
   onNext: () => void;
   onBack: () => void;
@@ -144,10 +147,18 @@ function UserDetailsForm({
         className="w-full p-2 rounded border"
       />
       <textarea
+        value={data.description}
+        onChange={(e) => onChange({ description: e.target.value })}
+        placeholder="Description"
+        className="w-full p-2 rounded border"
+        rows={4}
+      />
+      <textarea
         value={data.address}
         onChange={(e) => onChange({ address: e.target.value })}
         placeholder="Delivery address"
         className="w-full p-2 rounded border"
+        rows={4}
       />
       <input
         value={data.mobile}
@@ -178,6 +189,7 @@ function ReviewCampaign({
 }: {
   data: {
     book: any | null;
+    description: string;
     title: string;
     address: string;
     mobile: string;
@@ -199,6 +211,7 @@ function ReviewCampaign({
           </span>
         </p>
         <p>👤 Name: {data.title}</p>
+        <p>📝 Description: {data.description}</p>
         <p>🏠 Address: {data.address}</p>
         <p>📱 Mobile: {data.mobile || "N/A"}</p>
       </div>

@@ -14,12 +14,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Check campaign limit (max 3 campaigns per user)
+    const userCampaignsQuery = query(
+      collection(db, "campaigns"),
+      where("username", "==", username)
+    );
+    const userCampaignsSnap = await getDocs(userCampaignsQuery);
+    
+    if (userCampaignsSnap.docs.length >= 3) {
+      return NextResponse.json(
+        { error: "Maximum 3 campaigns allowed per user" },
+        { status: 400 }
+      );
+    }
+
     const campaignData = {
       book: {
         id: book.id,
         name: book.title,
         isbn: book.isbn,
-        finalPrice: book.finalPrice
+        finalPrice: book.finalPrice,
+        cover: book.coverLink
       },
       title,
       address,

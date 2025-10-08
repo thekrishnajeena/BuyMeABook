@@ -5,48 +5,46 @@ import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
 import Loader from "../components/Loader";
 
-// Dummy data for campaigns (replace with Firestore fetch later)
-
-interface Book {
-  title: string;
-  author: string;
-  cover: string;
-  description: string;
-}
-
-interface Campaign {
-  id: string;
-  username: string;
-  profileURL: string;
-  description: string;
-  book: Book;
-  totalContribution: number;
-  target: number;
-}
+// Types based on backend shape
+interface CampaignBook { id: string; name?: string; title?: string; isbn: string; finalPrice?: number; cover?: string }
+interface Campaign { id: string; username: string; book: CampaignBook; currentAmount: number; targetAmount: number; status: string; cover?: string }
 
 export default function Contribute() {
   const [search, setSearch] = useState("");
   const [selectedBook, setSelectedBook] = useState<any>(null);
-   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
 
 const filteredCampaigns = campaigns.filter((c) => {
   const username = (c.username ?? "").toLowerCase();
-  const bookTitle = (c.book?.title ?? "").toLowerCase();
+  const bookTitle = ((c.book?.name || c.book?.title) ?? "").toLowerCase();
   const searchTerm = search.toLowerCase();
- 
   return username.includes(searchTerm) || bookTitle.includes(searchTerm);
 });
 
+
+// helper to resolve book cover by ISBN
+const getBookCover = async (isbn: string) => {
+  try {
+    const res = await fetch(`https://bookcover.longitood.com/bookcover/${isbn}`);
+    if (res.ok) return res.url;
+  } catch {}
+  return "/book123.png";
+};
 
 useEffect(() => {
   const fetchCampaigns = async () => {
     try {
       const res = await fetch("/api/pubcampaigns");
       const data = await res.json();
-      console.log(data.campaigns);
       if (data.campaigns) {
-        setCampaigns(data.campaigns);
+        const withCovers = await Promise.all(
+          data.campaigns.map(async (c: Campaign) => ({
+            ...c,
+            cover: await getBookCover(c.book.isbn)
+          }))
+        );
+        setCampaigns(withCovers);
       }
     } catch (err) {
       console.error("Failed to fetch campaigns:", err);
@@ -91,78 +89,49 @@ useEffect(() => {
         </div>
 
         {/* Campaigns Grid */}
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {campaigns.map((campaign, idx) => (
-            <div
-              key={idx}
-              className="bg-white p-6 rounded-xl shadow hover:shadow-md transition flex flex-col"
-            >
-            
-              {/* User Info */}
-              <div className="flex items-center gap-3">
-                {/* <img
-                  src={campaign.profileURL}
-                  alt={campaign.username}
-                  className="w-12 h-12 rounded-full object-cover"
-                /> */}
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900">
-                    @{campaign.username}
-                  </h3>
-                  <p className="text-sm text-gray-500">Running a campaign</p>
-                </div>
-              </div>
-
-              {/* Campaign Description */}
-              {/* <p className="mt-4 text-gray-700 leading-relaxed">
-                {campaign.description}
-              </p> */}
-
-              {/* Book Card */}
-              <div
-                className="mt-6 bg-gray-50 border rounded-lg p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-100 transition"
-                onClick={() => setSelectedBook(campaign.book)}
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          {filteredCampaigns.map((campaign, idx) => {
+            const title = (campaign.book.name || campaign.book.title || "Untitled Book") as string;
+            const raised = campaign.currentAmount ?? 0;
+            const goal = campaign.targetAmount ?? campaign.book.finalPrice ?? 0;
+            const pct = Math.max(0, Math.min(100, goal ? Math.round((raised / goal) * 100) : 0));
+            return (
+              <a 
+                key={idx} 
+                href={`/campaign/${campaign.id}`}
+                className="block rounded-lg overflow-hidden group bg-white border border-gray-200 shadow-sm hover:shadow-md transition"
               >
-                {/* <img
-                  src={campaign.book.cover}
-                  alt={campaign.book.title}
-                  className="w-16 h-20 object-cover rounded"
-                /> */}
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    {campaign.book.title}
-                    
-                  </h4>
-                  {/* <p className="text-sm text-gray-600">{campaign.book.author}</p> */}
+                <div className="relative aspect-[2/3] overflow-hidden">
+                  <img
+                    src={campaign.book.cover || "/book123.png"}
+                    alt={title}
+                    loading="lazy"
+                    className="h-full w-full object-fill transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
-              </div>
-
-              {/* Progress */}
-              <div className="mt-6">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{
-                      width: `${
-                        (campaign.totalContribution / campaign.target) * 100
-                      }%`,
-                    }}
-                  ></div>
+                <div className="p-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-gray-900 line-clamp-2 mr-2">{title}</h3>
+                    <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-700 capitalize">{campaign.status}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-500">@{campaign.username}</p>
+                  <div className="mt-4">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${pct}%` }} />
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-sm text-gray-700">
+                      <span>₹{raised.toLocaleString()}</span>
+                      <span className="text-gray-500">of ₹{goal.toLocaleString()} ({pct}%)</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 w-full px-4 py-2 rounded-md bg-green-600 text-white font-medium text-center">
+                    View & Contribute
+                  </div>
                 </div>
-                <p className="mt-2 text-sm text-gray-600">
-                  ₹{campaign.totalContribution} raised of ₹{campaign.target}
-                </p>
-              </div>
-
-              {/* Contribute Button */}
-              <button
-                onClick={() => alert("Redirect to UPI payment gateway...")}
-                className="mt-6 px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-              >
-                Contribute via UPI
-              </button>
-            </div>
-          ))}
+              </a>
+            );
+          })}
         </div>
       </main>
 
