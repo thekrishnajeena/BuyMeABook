@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Link } from "lucide-react";
 
 type Profile = {
   photoURL?: string | null;
@@ -100,7 +101,7 @@ export default function AvatarDropdown({
           <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" role="none">
             <li>
               <a
-                href="#"
+                href={`/${username}`}
                 onClick={(e) => {e.preventDefault()
                   router.push(`/${username}`)
                 }

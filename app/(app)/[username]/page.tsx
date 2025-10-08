@@ -137,22 +137,21 @@ export default function DashboardPage() {
     }
   };
 
-  return (
-    <div className="flex-1 flex flex-col">
+return (
+    <div className="flex-1 flex flex-col min-h-screen">
       {/* Top bar */}
-      <header className="flex items-center justify-between rounded-md bg-black shadow px-4 py-3">
-        <h1 className="text-lg font-semibold text-white">
+      <header className="flex flex-row sm:flex-row items-start sm:items-center justify-between rounded-md bg-black shadow px-4 py-3 gap-2 sm:gap-0">
+        <h1 className="text-lg sm:text-xl font-semibold text-white truncate">
           {isOwner ? "Dashboard" : `${profile.displayName}'s Profile`}
         </h1>
         {isOwner && <AvatarDropdown profile={profile} onLogout={handleLogout} />}
       </header>
 
-      {/* Page Content */}
-      <main className="p-6 overflow-y-auto">
-        {/* Profile card */}
-        <section className="bg-black p-6 rounded-lg shadow mb-6">
-          <UserProfile 
-            profile={profile} 
+      <main className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
+        {/* Profile */}
+        <section className="bg-black p-4 sm:p-6 rounded-lg shadow">
+          <UserProfile
+            profile={profile}
             supportersCount={campaigns.reduce((sum, c) => sum + (c.supportersCount || 0), 0)}
             isOwner={isOwner}
             onDescriptionUpdate={handleDescriptionUpdate}
@@ -160,92 +159,74 @@ export default function DashboardPage() {
         </section>
 
         {/* Campaigns */}
-        <section className="bg-black p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-white">Campaigns</h2>
+        <section className="bg-black p-4 sm:p-6 rounded-lg shadow">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2 sm:gap-0">
+            <h2 className="text-lg sm:text-xl font-bold text-white">Campaigns</h2>
             {isOwner && (
-              <div className="relative group">
-                <button
-                  type="button"
-                  className={`cursor-pointer text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ${
-                    canCreateCampaign 
-                      ? "bg-blue-700 hover:bg-blue-800" 
-                      : "bg-gray-500 cursor-not-allowed"
-                  }`}
-                  onClick={() => canCreateCampaign && setOpen(true)}
-                  disabled={!canCreateCampaign}
-                >
-                  Create Campaign ({campaigns.length}/3)
-                </button>
-                {!canCreateCampaign && (
-                  <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    Maximum 3 campaigns allowed
-                  </div>
-                )}
-              </div>
+              <button
+                className={`cursor-pointer text-white font-medium rounded-lg text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 ${
+                  canCreateCampaign ? "bg-blue-700 hover:bg-blue-800" : "bg-gray-500 cursor-not-allowed"
+                }`}
+                onClick={() => canCreateCampaign && setOpen(true)}
+                disabled={!canCreateCampaign}
+              >
+                Create Campaign ({campaigns.length}/3)
+              </button>
             )}
           </div>
 
-          <CreateCampaignModal open={open} onClose={() => setOpen(false)}
-           fetchCampaigns={fetchCampaigns}
-           />
+          <CreateCampaignModal open={open} onClose={() => setOpen(false)} fetchCampaigns={fetchCampaigns} />
 
-          <div className="mt-6">
+          <div className="mt-4 sm:mt-6">
             {campaigns?.length ? (
-              <ul className="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {campaigns.map((c, i) => (
                   <li key={i} className="rounded-lg overflow-hidden group bg-white/5 border border-white/10 hover:border-white/20 transition relative">
-                    <Link 
-                      href={`/campaign/${c.id}`}
-                      className="block cursor-pointer"
-                    >
+                    <Link href={`/campaign/${c.id}`} className="block cursor-pointer">
                       <div className="relative aspect-[2/3] overflow-hidden">
                         <img
-                          className="h-full w-full object-fill transition-transform duration-300 group-hover:scale-105"
                           src={c.book.cover || "/book123.png"}
-                          alt={(c.book?.name || c.book?.title || "Book Cover") as string}
-                          loading="lazy"
+                          alt={c.book?.name || c.book?.title || "Book Cover"}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <div className="p-4">
-                        <h5 className="mb-1 text-lg font-semibold text-white line-clamp-2">
-                          {(c.book?.name || c.book?.title || "Untitled Book") as string}
+                      <div className="p-3 sm:p-4">
+                        <h5 className="mb-1 text-base sm:text-lg font-semibold text-white line-clamp-2">
+                          {c.book?.name || c.book?.title || "Untitled Book"}
                         </h5>
-                        <div className="mt-2 flex items-center justify-between text-sm text-gray-300">
+                        <div className="mt-1 flex items-center justify-between text-xs sm:text-sm text-gray-300">
                           <span className="capitalize">{c.status}</span>
-                          <span>
-                            ₹{c.currentAmount} / <span className="text-gray-200">₹{c.targetAmount}</span>
-                          </span>
+                          <span>₹{c.currentAmount} / <span className="text-gray-200">₹{c.targetAmount}</span></span>
                         </div>
-                        <div className="mt-3 w-full rounded-md bg-green-600 hover:bg-green-700 text-white py-2 text-sm transition text-center">
+                        <div className="mt-2 sm:mt-3 w-full rounded-md bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 text-sm sm:text-base text-center transition">
                           {isOwner ? "View Campaign" : "Donate"}
                         </div>
                       </div>
                     </Link>
-                    
-                    {/* Delete button for owner */}
+
                     {isOwner && (
                       <button
-                        className="absolute top-2 right-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 p-1 sm:p-2 bg-red-600 hover:bg-red-700 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           handleCampaignDelete(c.id);
                         }}
                       >
-                        <FiTrash2 className="w-4 h-4" />
+                        <FiTrash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     )}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No campaigns yet.</p>
+              <p className="text-gray-500 text-sm sm:text-base">No campaigns yet.</p>
             )}
           </div>
         </section>
       </main>
     </div>
   );
+
 }

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiHome } from "react-icons/fi";
+import { FiHome, FiLogOut, FiMenu } from "react-icons/fi";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import Link from "next/link";
@@ -63,36 +63,53 @@ export default function DashboardLayout({
     router.replace("/");
     console.log("Logout clicked")};
 
-  return (
+ return (
     <div className="min-h-screen flex bg-gray-50">
       {/* Sidebar */}
       {isOwner && (
         <>
+          {/* Mobile toggle button */}
+          <button
+            className="fixed top-4 left-4 z-50 md:hidden p-2 bg-black text-white rounded-md shadow"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            <FiMenu className="w-5 h-5" />
+          </button>
+
           <div
             className={`fixed inset-y-0 left-0 transform ${
               sidebarOpen ? "translate-x-0" : "-translate-x-full"
-            } md:translate-x-0 md:static transition-transform duration-200 ease-in-out w-64 bg-black shadow-lg z-50`}
+            } md:translate-x-0 md:static transition-transform duration-200 ease-in-out w-64 bg-black shadow-lg z-40`}
           >
-            <div className="p-4 font-bold text-x border-gray-200 text-white">
-           <Link href="/" className="flex-shrink-0 flex items-center">
-            <img src="/bmab.png" alt="Logo" className="h-10 w-auto lg:h-14" />
-            BuyMeABook
-          </Link>
+            <div className="p-4 font-bold text-xl border-b border-gray-700 text-white flex items-center gap-2">
+              <Link href="/" className="flex items-center gap-2">
+                <img src="/bmab.png" alt="Logo" className="h-10 w-auto lg:h-14" />
+                BuyMeABook
+              </Link>
             </div>
+
             <nav className="mt-4 flex flex-col space-y-2">
-
-             { navItems.map((item) => {
-
-              const isActive = pathname === item.href;
-              return (<SidebarLink icon={<FiHome />} key={item.name} label={item.name} href={item.href} active={isActive}/>   )
-
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-white hover:bg-gray-700 transition ${
+                      isActive ? "bg-gray-800" : ""
+                    }`}
+                  >
+                    {<FiHome className="w-5 h-5" />}
+                    <span className="truncate">{item.name}</span>
+                  </Link>
+                );
               })}
 
-                <button
+              <button
                 onClick={handleLogout}
-                className="cursor-pointer text-white text-left px-4 py-2 hover:bg-gray-50 hover:text-blue-600 rounded-md"
+                className="cursor-pointer text-white text-left px-4 py-2 hover:bg-gray-700 rounded-md flex items-center gap-2"
               >
-                Logout
+                <FiLogOut className="w-5 h-5" /> Logout
               </button>
             </nav>
           </div>
@@ -100,7 +117,7 @@ export default function DashboardLayout({
           {/* Overlay on mobile */}
           {sidebarOpen && (
             <div
-              className="fixed inset-0 bg-black/40 md:hidden"
+              className="fixed inset-0 bg-black/40 md:hidden z-30"
               onClick={() => setSidebarOpen(false)}
             />
           )}
@@ -108,7 +125,10 @@ export default function DashboardLayout({
       )}
 
       {/* Main content */}
-      <main className="flex-1 p-6 bg-gradient-to-b from-[#101212] to-[#08201D]">{children}</main>
+      <main className="flex-1 p-4 sm:p-6 bg-gradient-to-b from-[#101212] to-[#08201D]">
+        {children}
+      </main>
     </div>
   );
+
 }

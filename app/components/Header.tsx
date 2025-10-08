@@ -170,6 +170,9 @@ console.log("Stored username:", localStorage.getItem("username"));
     {menuOpen && (
       <div className="lg:hidden bg-gray-900 border-t border-gray-700 py-4 z-[100]">
         <div className="flex flex-col space-y-3 px-4">
+          <Link href={`/${localStorage.getItem("username")}`} className="text-base font-medium text-white hover:text-blue-400 transition-all">
+          Home
+        </Link>
           <Link href="/contribute" className="text-base font-medium text-white hover:text-blue-400">
             Contribute
           </Link>

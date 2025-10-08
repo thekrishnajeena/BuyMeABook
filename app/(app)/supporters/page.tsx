@@ -13,7 +13,7 @@ export default function SupportersPage() {
       try {
         const res = await fetch("/api/supporters");
         const data = await res.json();
-        setSupporters(data);
+        setSupporters(data.data);
       } catch (err) {
         console.error("Error fetching supporters:", err);
       } finally {
@@ -24,7 +24,7 @@ export default function SupportersPage() {
   }, []);
 
   if (loading) {
-    return <div className="p-6 text-gray-800">⏳ Loading supporters...</div>;
+    return <div className="p-6 text-white">⏳ Loading supporters...</div>;
   }
 
   return (
@@ -32,7 +32,7 @@ export default function SupportersPage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <FiHeart className="text-pink-500 text-2xl" />
-        <h1 className="text-2xl font-bold text-gray-800">Supporters</h1>
+        <h1 className="text-2xl font-bold text-white">Supporters</h1>
       </div>
 
       {/* Supporter list */}
@@ -45,13 +45,13 @@ export default function SupportersPage() {
             >
               <div className="flex items-center gap-4">
                 <img
-                  src={s.avatar || "/default-avatar.png"}
+                  src={s.avatar || "/bmab.png"}
                   alt={s.name}
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div>
                   <h2 className="font-semibold text-gray-800">{s.name}</h2>
-                  <p className="text-sm text-gray-500">@{s.username}</p>
+                  <p className="text-sm text-gray-500">@{s.username || "buymeabook"}</p>
                 </div>
               </div>
 
@@ -73,7 +73,7 @@ export default function SupportersPage() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500">No supporters yet. Be the first to donate!</p>
+        <p className="text-white">No supporters yet. Be the first to donate!</p>
       )}
     </div>
   );
