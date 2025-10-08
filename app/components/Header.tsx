@@ -104,120 +104,102 @@ console.log("Stored username:", localStorage.getItem("username"));
     }
   };
 
-return (
-    <header className="absolute inset-x-0 top-0 z-100 w-full bg-[#0B1120] text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Navbar */}
-        <nav className="flex items-center justify-between h-16 lg:h-20 bg-[#0B1120] text-white shadow-md">
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0 flex items-center">
-            <img src="/bmab.png" alt="Logo" className="h-10 w-auto lg:h-14" />
-          </Link>
+ return (
+  <header className="absolute inset-x-0 top-0 z-[100] w-full bg-[#0B1120] text-white">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    {/* Navbar */}
+    <nav className="flex items-center justify-between h-16 lg:h-20 bg-[#0B1120] text-white shadow-md relative">
+      {/* Logo */}
+      <Link href="/" className="flex-shrink-0 flex items-center">
+        <img src="/bmab.png" alt="Logo" className="h-8 sm:h-10 lg:h-14 w-auto" />
+      </Link>
 
-<TestingBanner/>
-<FeedbackModal/>
-          {/* Mobile menu button */}
+      {/* Center: Testing Tag */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
+        <span className="bg-yellow-400 text-black text-xs sm:text-sm px-2 py-1 rounded-full shadow-md
+        ">
+          🚧Testing🚧
+        </span>
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent("open-feedback-modal"))}
+          className="bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm px-2 py-1 rounded-full shadow-md transition-all"
+        >
+          Give Feedback
+        </button>
+      </div>
+
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="lg:hidden inline-flex p-2 rounded-md text-white hover:bg-blue-800 focus:bg-blue-800 transition-all"
+      >
+        {menuOpen ? (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        ) : (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
+          </svg>
+        )}
+      </button>
+
+      {/* Desktop Menu */}
+      <div className="hidden lg:flex lg:items-center lg:space-x-10">
+        <Link href="/contribute" className="text-base font-medium text-white hover:text-blue-400 transition-all">
+          Contribute
+        </Link>
+        <Link href="/about" className="text-base font-medium text-white hover:text-blue-400 transition-all">
+          About
+        </Link>
+
+        {user ? (
+          <AvatarDropdown profile={user} onLogout={handleLogout} />
+        ) : (
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden inline-flex p-2 rounded-md text-white hover:bg-blue-800 focus:bg-blue-800 transition-all"
+            onClick={handleLogin}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 font-semibold rounded-lg transition-all"
           >
-            {menuOpen ? (
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 8h16M4 16h16"
-                />
-              </svg>
-            )}
+            Sign in with Google
           </button>
-
-          {/* Desktop Menu */}
-          <div className="hidden lg:flex lg:items-center lg:space-x-10">
-            <Link
-              href="/contribute"
-              className="text-base font-medium text-white hover:text-blue-400 transition-all"
-            >
-              Contribute
-            </Link>
-            <Link
-              href="/about"
-              className="text-base font-medium text-white hover:text-blue-400 transition-all"
-            >
-              About
-            </Link>
-
-            {user ? (
-              <AvatarDropdown profile={user} onLogout={handleLogout} />
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 font-semibold rounded-lg transition-all"
-              >
-                Sign in with Google
-              </button>
-            )}
-          </div>
-        </nav>
-
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <div className="lg:hidden bg-gray-900 border-t border-gray-700 py-4 z-[100]">
-            <div className="flex flex-col space-y-3 px-4">
-              
-              <Link
-                href="/contribute"
-                className="text-base font-medium text-white hover:text-blue-400"
-              >
-                Contribute
-              </Link>
-              <Link
-                href="/about"
-                className="text-base font-medium text-white hover:text-blue-400"
-              >
-                About
-              </Link>
-              {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="mt-2 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 
-                  z-[100] rounded-lg font-semibold"
-                >
-                  Logout
-                </button>
-              ) : (
-                <button
-                  onClick={handleLogin}
-                  className="mt-2 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
-                >
-                  Sign in with Google
-                </button>
-              )}
-            </div>
-          </div>
         )}
       </div>
-    </header>
+    </nav>
+
+    {/* Mobile Menu */}
+    {menuOpen && (
+      <div className="lg:hidden bg-gray-900 border-t border-gray-700 py-4 z-[100]">
+        <div className="flex flex-col space-y-3 px-4">
+          <Link href="/contribute" className="text-base font-medium text-white hover:text-blue-400">
+            Contribute
+          </Link>
+          <Link href="/about" className="text-base font-medium text-white hover:text-blue-400">
+            About
+          </Link>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="mt-2 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="mt-2 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
+            >
+              Sign in with Google
+            </button>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+
+  {/* Feedback Modal */}
+  <FeedbackModal />
+</header>
+
   );
 }
 
