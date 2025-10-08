@@ -118,7 +118,7 @@ console.log("Stored username:", localStorage.getItem("username"));
       <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
         <span className="bg-yellow-400 text-black text-xs sm:text-sm px-2 py-1 rounded-full shadow-md
         ">
-          🚧Testing🚧
+          Testing
         </span>
         <button
           onClick={() => window.dispatchEvent(new CustomEvent("open-feedback-modal"))}
