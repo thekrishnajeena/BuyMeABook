@@ -108,7 +108,7 @@ export default function About() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 text-center text-sm border-t">
+      <footer className="py-8 text-center text-sm border-t text-white">
         © {new Date().getFullYear()} BuyMeABook. Built with ❤️ for readers.
       </footer>
     </div>

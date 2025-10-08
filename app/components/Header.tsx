@@ -98,6 +98,7 @@ console.log("Stored username:", localStorage.getItem("username"));
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      localStorage.removeItem("username");
       navigate.push("/")
     } catch (error) {
       console.error("Logout error:", error);
