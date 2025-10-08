@@ -183,6 +183,7 @@ export default function Explore() {
       id: "1",
       title: "Try Refreshing the page",
       excerpt: "dummy article",
+      category: "Life Lessons",
       readTime: "5 min read",
       image: "/book1.jpg",
       publishedAt: "infinity",
