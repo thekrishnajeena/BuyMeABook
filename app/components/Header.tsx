@@ -11,6 +11,7 @@ import {doc, setDoc, getDoc, writeBatch} from "firebase/firestore";
 import {db} from "../firebaseConfig";
 import AvatarDropdown from "./AvatarDeopdown";
 import { useState } from "react";
+import TestingBanner, { FeedbackModal } from "./Testing";
 
 function Header(){
 
@@ -113,6 +114,8 @@ return (
             <img src="/bmab.png" alt="Logo" className="h-10 w-auto lg:h-14" />
           </Link>
 
+<TestingBanner/>
+<FeedbackModal/>
           {/* Mobile menu button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}

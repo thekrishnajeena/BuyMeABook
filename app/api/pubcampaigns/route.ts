@@ -10,7 +10,6 @@ export async function GET(req: NextRequest) {
     const snap = await getDocs(q);
     const campaigns = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-    console.log("API: ", campaigns);
     return NextResponse.json({ campaigns });
   } catch (err) {
     console.error("Error fetching campaigns:", err);
